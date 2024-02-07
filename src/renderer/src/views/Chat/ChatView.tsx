@@ -6,4 +6,5 @@ export const ChatView = () => {
 
 const Wrapper = styled.div`
   border: 1px solid green;
+  grid-area: chat;
 `
