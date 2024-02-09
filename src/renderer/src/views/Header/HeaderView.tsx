@@ -1,5 +1,5 @@
 import { ThemeSwitch } from '@renderer/components/ui/ThemeSwitch'
-import { observer } from 'mobx-react'
+import { observer } from 'mobx-react-lite'
 import styled from 'styled-components'
 import { useHeaderController } from './useHeaderController'
 
@@ -14,6 +14,9 @@ export const HeaderView = observer(() => {
 })
 
 const Wrapper = styled.header`
-  border: 1px solid green;
-  grid-area: chat;
+  grid-area: header;
+  border-bottom: black 1px solid;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
 `

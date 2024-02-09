@@ -5,6 +5,6 @@ export const SideBarView = () => {
 }
 
 const Wrapper = styled.div`
-  border: 1px solid red;
+  border-right: 1px solid black;
   grid-area: sidebar;
 `

@@ -1,20 +1,20 @@
+import { electronApp, is, optimizer } from '@electron-toolkit/utils'
+import { ChildProcessWithoutNullStreams, exec, spawn } from 'child_process'
 import { app, BrowserWindow, ipcMain } from 'electron'
 import { join } from 'path'
-import { electronApp, optimizer, is } from '@electron-toolkit/utils'
-import { spawn } from 'child_process'
-import path from 'path'
-import { exec } from 'child_process'
+import { fileURLToPath } from 'url'
 
-let goProcess
+let goLib: ChildProcessWithoutNullStreams
 let mainWindow: BrowserWindow
 
 function createWindow(): void {
-  // Create the browser window.
   mainWindow = new BrowserWindow({
     width: 900,
     height: 670,
     webPreferences: {
-      preload: join(__dirname, '../preload/index.js')
+      preload: fileURLToPath(new URL('../preload/index.mjs', import.meta.url)),
+      contextIsolation: true,
+      nodeIntegration: true
     }
   })
 
@@ -29,21 +29,6 @@ function createWindow(): void {
   }
 }
 
-function addGo() {
-  console.log('dir name: ', __dirname)
-  exec(`chmod +x main`)
-  console.log(path.join(__dirname, './libs/main'))
-  goProcess = spawn('./libs/main')
-  goProcess.stdout.on('data', (data) => {
-    console.log(data.toString())
-    mainWindow.webContents.send('message-from-go', data.toString())
-  })
-  ipcMain.on('message-to-go', (event, message) => {
-    console.log(message)
-    goProcess.stdin.write(message + '\n')
-  })
-}
-
 app.whenReady().then(() => {
   electronApp.setAppUserModelId('com.electron')
 
@@ -51,16 +36,29 @@ app.whenReady().then(() => {
     optimizer.watchWindowShortcuts(window)
   })
 
-  // ipcMain.on('ping', () => console.log('pong'))
-
   createWindow()
+  spawnGoLib()
+  setHandlers()
 
   app.on('activate', function () {
     if (BrowserWindow.getAllWindows().length === 0) createWindow()
   })
-
-  addGo()
 })
+
+function spawnGoLib() {
+  exec(`chmod +x main`)
+  goLib = spawn('./libs/main')
+}
+
+function setHandlers() {
+  ipcMain.handle('send-message', (_, message) => {
+    goLib.stdin.write(message + '\n')
+  })
+
+  goLib.stdout.on('data', (data) => {
+    mainWindow.webContents.send('message-received', data.toString())
+  })
+}
 
 app.on('window-all-closed', () => {
   app.quit()

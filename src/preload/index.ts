@@ -1,12 +1,31 @@
-import { contextBridge } from 'electron'
-import { electronAPI } from '@electron-toolkit/preload'
+import { IpcRendererEvent, contextBridge, ipcRenderer } from 'electron'
 
-// Custom APIs for renderer
-const ElectronApi = {}
+type OnMessageReceived = (arg1: never, message: string) => void
+
+function sendMessage(message: string) {
+  return ipcRenderer.invoke('send-message', message)
+}
+
+function onMessageReceived(callback: (message: string) => void): OnMessageReceived {
+  const listener = (_: IpcRendererEvent, message: string) => {
+    callback(message)
+  }
+  ipcRenderer.on('message-received', listener)
+  return listener
+}
+
+function removeMessageReceivedListener(listener: OnMessageReceived) {
+  ipcRenderer.removeListener('message-received', listener)
+}
+
+const ElectronApi = {
+  sendMessage,
+  onMessageReceived,
+  removeMessageReceivedListener
+}
 
 try {
-  contextBridge.exposeInMainWorld('electron', electronAPI)
   contextBridge.exposeInMainWorld('ElectronApi', ElectronApi)
 } catch (error) {
-  console.error(error)
+  console.error('ERROR: ', error)
 }
