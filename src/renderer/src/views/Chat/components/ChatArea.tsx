@@ -30,7 +30,7 @@ const MessageWrapper = styled.p`
   width: fit-content;
   max-width: 70%;
   color: black;
-  margin-bottom: 20px;
+  margin-bottom: 10px;
   padding: 4px 8px;
   border-radius: 2px 8px 8px 8px;
   word-wrap: break-word;

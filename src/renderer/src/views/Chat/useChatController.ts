@@ -1,7 +1,10 @@
-import { useLocalObservable } from 'mobx-react-lite'
-import { useEffect, useRef } from 'react'
-import { ChatViewModel } from './ChatViewModel'
+import { CustomEvents } from '@renderer/enums/CustomEvents'
 import { MessageFlow } from '@renderer/enums/MessageFlow'
+import { useHandleCustomEvent } from '@renderer/hooks/useHandleCustomEvent'
+import { useKeyPressed } from '@renderer/hooks/useKeyPressed'
+import { useLocalObservable } from 'mobx-react-lite'
+import { useRef } from 'react'
+import { ChatViewModel } from './ChatViewModel'
 
 export const useChatController = () => {
   const chatVM = useLocalObservable(() => new ChatViewModel())
@@ -21,13 +24,8 @@ export const useChatController = () => {
     inputRef.current.value = ''
   }
 
-  useEffect(() => {
-    const listener = window.ElectronApi.onMessageReceived(chatVM.addReceivedMessage.bind(chatVM))
-
-    return () => {
-      window.ElectronApi.removeMessageReceivedListener(listener)
-    }
-  })
+  useKeyPressed(inputRef, sendMessage, 'Enter')
+  useHandleCustomEvent(chatVM.addReceivedMessage.bind(chatVM), CustomEvents.MessageReceived)
 
   return {
     inputRef,

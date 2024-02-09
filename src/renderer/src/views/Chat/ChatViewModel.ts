@@ -13,14 +13,14 @@ export class ChatViewModel {
     makeAutoObservable(this)
   }
 
-  addReceivedMessage(messsage: string) {
+  public addReceivedMessage(message: { message: string }) {
     this._messages.push({
-      text: messsage,
+      text: message.message,
       flow: MessageFlow.Incoming
     })
   }
 
-  sendNewMessage(message: OutgoingMessage) {
+  public sendNewMessage(message: OutgoingMessage) {
     if (this.isMessageValid(message)) {
       self.ElectronApi.sendMessage(message.text)
       this._messages.push(message)
