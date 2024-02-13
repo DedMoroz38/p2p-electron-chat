@@ -1,12 +1,6 @@
 # p2p-electron-chat
 
-An Electron application with React and TypeScript
-
-## Recommended IDE Setup
-
-- [VSCode](https://code.visualstudio.com/) + [ESLint](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint) + [Prettier](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode)
-
-## Project Setup
+An Electron P2P-chat application with a power of Go
 
 ### Install
 
@@ -17,18 +11,21 @@ $ yarn
 ### Development
 
 ```bash
-$ yarn dev
+$ yarn app
 ```
 
-### Build
+### Test
 
+Start the app
 ```bash
-# For windows
-$ yarn build:win
-
-# For macOS
-$ yarn build:mac
-
-# For Linux
-$ yarn build:linux
+# This will automatically create a new host on the network
+$ yarn app
 ```
+
+In a separate terminal go to /libs/ and run:
+```bash
+# This will create another peer on the network
+$ ./main
+```
+
+Based on the peer id, the one with a greater id will connect to the second. Go to https://github.com/DedMoroz38/Go-p2p-network to find more about the network setup.
