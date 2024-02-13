@@ -56,6 +56,7 @@ function setHandlers() {
   })
 
   goLib.stdout.on('data', (data) => {
+    console.log('New message: ', data.toString())
     mainWindow.webContents.send('message-received', data.toString())
   })
 }
